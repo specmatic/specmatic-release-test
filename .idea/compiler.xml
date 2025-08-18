@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="17" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="specmatic-release-test.app" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.app.main" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.app.test" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.list" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.list.main" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.list.test" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.utilities" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.utilities.main" options="-Xlint:unchecked" />
+      <module name="specmatic-release-test.utilities.test" options="-Xlint:unchecked" />
+    </option>
+  </component>
+</project>
