@@ -10,7 +10,6 @@ specmatic {
     kotlinApiVersion = KotlinVersion.KOTLIN_2_1
     releasePublishTasks =
         listOf(
-            "dockerBuildxPublish",
             "publishAllPublicationsToSpecmaticPrivateRepository",
             "publishAllPublicationsToSpecmaticSnapshotsRepository",
             "publishAllPublicationsToSpecmaticReleasesRepository",
