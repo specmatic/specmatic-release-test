@@ -46,11 +46,13 @@ jobs:
             -Prelease.releaseVersion=${RELEASE_VERSION} \
             -Prelease.newVersion=${NEXT_VERSION}
           
-          echo ${SPECMATIC_GITHUB_TOKEN} | gh auth login --with-token
+          echo "Bumping version to $RELEASE_VERSION in documentation site"
           
-          gh workflow run update-version-numbers.yml \
-            --repo specmatic/docs.specmatic.io \
-            --field specmatic-release-test-version=${RELEASE_VERSION}
+          curl -X POST \
+            -H "Authorization: Bearer ${SPECMATIC_GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/specmatic/docs.specmatic.io/actions/workflows/update-version-numbers.yml/dispatches \
+              -d '{"ref":"main","inputs":{"specmatic-release-test-version":"'"${RELEASE_VERSION}"'"}}'
 
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: "${{ secrets.SPECMATIC_GPG_PRIVATE_KEY }}"
