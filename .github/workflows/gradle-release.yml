@@ -45,6 +45,13 @@ jobs:
             release \
             -Prelease.releaseVersion=${RELEASE_VERSION} \
             -Prelease.newVersion=${NEXT_VERSION}
+          
+          echo ${SPECMATIC_GITHUB_TOKEN} | gh auth login --with-token
+          
+          gh workflow run update-version-numbers.yml \
+            --repo specmatic/docs.specmatic.io \
+            --field specmatic-release-test-version=${RELEASE_VERSION}
+
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: "${{ secrets.SPECMATIC_GPG_PRIVATE_KEY }}"
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: "${{ secrets.SPECMATIC_GPG_KEY_ID }}"
