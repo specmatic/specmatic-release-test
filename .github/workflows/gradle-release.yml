@@ -37,6 +37,8 @@ jobs:
           RELEASE_VERSION=$(semver get release $(/usr/bin/grep -E '^\s*version\s*=' gradle.properties | /usr/bin/sed -E -e 's/^\s*version\s*=//g'))
           NEXT_VERSION=$(semver bump ${{ github.event.inputs.bump_type }} $(/usr/bin/grep -E '^\s*version\s*=' gradle.properties | /usr/bin/sed -E -e 's/^\s*version\s*=//g'))-SNAPSHOT
           echo "Making a release with version $RELEASE_VERSION and next version $NEXT_VERSION..."
+
+          cat .git/config
           
           git clean -fd
           git remote set-url origin "https://x-access-token:${{ secrets.SPECMATIC_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
