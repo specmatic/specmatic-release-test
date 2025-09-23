@@ -2,7 +2,7 @@ import io.specmatic.gradle.extensions.RepoType
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    id("io.specmatic.gradle") version "0.13.1"
+    id("io.specmatic.gradle") version "0.13.3"
 }
 
 specmatic {
