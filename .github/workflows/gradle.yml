@@ -15,9 +15,8 @@ jobs:
     permissions:
       contents: write # This is required so that the dependency check can push dependency graph to the github repository
     steps:
-      - uses: specmatic/specmatic-github-workflows/action-build-gradle@main
-        with:
-          gradle-extra-args: -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }} --stacktrace -i --continue || true; /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table
+      - run: |
+          ./gradlew --no-daemon vulnScanSBOMScan check assemble -Preposilite.user=specmatic-builder -Preposilite.token=*** --stacktrace -i || true; /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table
 
       - name: Publish Snapshot
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
