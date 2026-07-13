@@ -24,7 +24,7 @@ jobs:
         run: |
           set -e
           echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
-          ./gradlew publishAllPublicationsToSpecmaticPrivateRepository publishAllPublicationsToSpecmaticSnapshotsRepository dockerBuildxPublish
+          ./gradlew publishAllPublicationsToSpecmaticPrivateRepository publishAllPublicationsToSpecmaticSnapshotsRepository dockerBuildxPublish --stacktrace
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: "${{ secrets.SPECMATIC_GPG_PRIVATE_KEY }}"
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: "${{ secrets.SPECMATIC_GPG_KEY_ID }}"
