@@ -25,7 +25,9 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - run: |
-          ./gradlew --no-daemon vulnScanSBOMScan check assemble -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }} --stacktrace -i || true; /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table
+          ./gradlew --no-daemon vulnScanSBOMScan check assemble -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }} --stacktrace -i || true
+          echo "Running grype to check for vulnerabilities in the generated SBOM"
+          /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table
 
       - name: Publish Snapshot
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
