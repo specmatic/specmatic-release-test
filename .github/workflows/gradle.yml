@@ -15,35 +15,16 @@ jobs:
     permissions:
       contents: write # This is required so that the dependency check can push dependency graph to the github repository
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: specmatic/specmatic-github-workflows/action-build-gradle@main
         with:
-          persist-credentials: false
-      - name: Install java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - run: |
-          set +e
-          ./gradlew --no-daemon vulnScanSBOMScan check assemble -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }} --stacktrace || true
-          docker images
-          echo "Running grype to check for vulnerabilities in the generated SBOM"
-          set -x
-          file /home/runner/.specmatic-grype/grype/grype
-          /home/runner/.specmatic-grype/grype/grype --version
-          /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table --verbose
+          gradle-extra-args: -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}
 
       - name: Publish Snapshot
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
         run: |
           set -e
           echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
-          ./gradlew publishAllPublicationsToSpecmaticPrivateRepository publishAllPublicationsToSpecmaticSnapshotsRepository dockerBuildxPublish --stacktrace
+          ./gradlew publishAllPublicationsToSpecmaticPrivateRepository publishAllPublicationsToSpecmaticSnapshotsRepository dockerBuildxPublish
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: "${{ secrets.SPECMATIC_GPG_PRIVATE_KEY }}"
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: "${{ secrets.SPECMATIC_GPG_KEY_ID }}"
