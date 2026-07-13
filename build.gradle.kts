@@ -12,13 +12,14 @@ specmatic {
             "publishAllPublicationsToSpecmaticReleasesRepository",
         )
 
-//    publishTo("specmaticPrivate", "https://repo.specmatic.io/private", RepoType.PUBLISH_ALL)
-//    publishTo("specmaticSnapshots", "https://repo.specmatic.io/snapshots", RepoType.PUBLISH_OBFUSCATED_ONLY)
-//    publishTo("specmaticReleases", "https://repo.specmatic.io/releases", RepoType.PUBLISH_OBFUSCATED_ONLY)
 
     withCommercialApplicationLibrary(project(":app")) {
         mainClass = "org.example.app.AppKt"
         githubRelease()
+
+        publishTo("specmaticPrivate", "https://repo.specmatic.io/private", RepoType.PUBLISH_ALL)
+        publishTo("specmaticSnapshots", "https://repo.specmatic.io/snapshots", RepoType.PUBLISH_OBFUSCATED_ONLY)
+        publishTo("specmaticReleases", "https://repo.specmatic.io/releases", RepoType.PUBLISH_OBFUSCATED_ONLY)
 
         publish {
             pom {
@@ -94,3 +95,4 @@ specmatic {
         }
     }
 }
+
