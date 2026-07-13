@@ -5,3 +5,4 @@
 build
 gen-kt/
 gen-resources/
+.kotlin/
