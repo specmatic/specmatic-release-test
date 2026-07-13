@@ -15,6 +15,8 @@ jobs:
     permissions:
       contents: write # This is required so that the dependency check can push dependency graph to the github repository
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
       - run: |
           ./gradlew --no-daemon vulnScanSBOMScan check assemble -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }} --stacktrace -i || true; /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table
 
