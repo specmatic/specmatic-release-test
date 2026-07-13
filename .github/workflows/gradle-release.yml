@@ -27,10 +27,8 @@ jobs:
       - name: Docker Login
         run: echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
 
-      - name: 'Build/test'
-        uses: specmatic/specmatic-github-workflows/action-build-gradle@main
-        with:
-          gradle-extra-args: -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}
+      - name: 'Base setup'
+        uses: specmatic/specmatic-github-workflows/action-base-setup@main
 
       - name: 'Release'
         run: |
