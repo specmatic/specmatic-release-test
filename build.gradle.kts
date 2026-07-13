@@ -1,5 +1,4 @@
 import io.specmatic.gradle.extensions.RepoType
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     id("io.specmatic.gradle")
@@ -13,9 +12,9 @@ specmatic {
             "publishAllPublicationsToSpecmaticReleasesRepository",
         )
 
-    publishTo("specmaticPrivate", "https://repo.specmatic.io/private", RepoType.PUBLISH_ALL)
-    publishTo("specmaticSnapshots", "https://repo.specmatic.io/snapshots", RepoType.PUBLISH_OBFUSCATED_ONLY)
-    publishTo("specmaticReleases", "https://repo.specmatic.io/releases", RepoType.PUBLISH_OBFUSCATED_ONLY)
+//    publishTo("specmaticPrivate", "https://repo.specmatic.io/private", RepoType.PUBLISH_ALL)
+//    publishTo("specmaticSnapshots", "https://repo.specmatic.io/snapshots", RepoType.PUBLISH_OBFUSCATED_ONLY)
+//    publishTo("specmaticReleases", "https://repo.specmatic.io/releases", RepoType.PUBLISH_OBFUSCATED_ONLY)
 
     withCommercialApplicationLibrary(project(":app")) {
         mainClass = "org.example.app.AppKt"
