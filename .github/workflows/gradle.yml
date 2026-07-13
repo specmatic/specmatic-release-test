@@ -32,7 +32,9 @@ jobs:
           set +e
           ./gradlew --no-daemon vulnScanSBOMScan check assemble -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }} --stacktrace || true
           echo "Running grype to check for vulnerabilities in the generated SBOM"
-          /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table
+          set -x
+          file /home/runner/.specmatic-grype/grype/grype 
+          /home/runner/.specmatic-grype/grype/grype specmatic/release-test-snapshot:0.0.3 --quiet --only-fixed --output table --verbose
 
       - name: Publish Snapshot
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
