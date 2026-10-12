@@ -18,17 +18,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: 'Base setup'
+        uses: specmatic/specmatic-github-workflows/action-base-setup@main
 
       - name: Docker Login
         run: echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
-
-      - name: 'Base setup'
-        uses: specmatic/specmatic-github-workflows/action-base-setup@main
 
       - name: 'Release'
         run: |
@@ -36,10 +30,9 @@ jobs:
           NEXT_VERSION=$(semver bump ${{ github.event.inputs.bump_type }} $(/usr/bin/grep -E '^\s*version\s*=' gradle.properties | /usr/bin/sed -E -e 's/^\s*version\s*=//g'))
           echo "Making a release with version $RELEASE_VERSION and next version $NEXT_VERSION..."
 
-          cat .git/config
-          
           git clean -fd
-          git remote set-url origin "https://x-access-token:${{ secrets.SPECMATIC_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git config --unset-all http.https://github.com/.extraheader || true
+          git config set --local http.https://github.com/.extraheader "Authorization: basic $(/bin/echo -n x-access-token:${{ secrets.SPECMATIC_GITHUB_TOKEN }} | base64)"
 
           ./gradlew --stacktrace \
             promote \

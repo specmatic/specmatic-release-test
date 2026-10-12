@@ -1,6 +1,7 @@
 name: Java Build with Gradle
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
   pull_request:
@@ -9,30 +10,42 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     permissions:
-      contents: write # This is required so that the dependency check can push dependency graph to the github repository
+      pull-requests: write
+      contents: write
+      checks: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: specmatic/specmatic-github-workflows/action-build-gradle@main
         with:
+          pre-gradle-command: ./gradlew assemble --parallel -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}
           gradle-extra-args: -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}
+          github-token-for-pr-comment: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker Login
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
+        run: echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Publish Snapshot
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
         run: |
-          set -e
-          echo ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }} | docker login -u ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }} --password-stdin
-          ./gradlew publishAllPublicationsToSpecmaticPrivateRepository publishAllPublicationsToSpecmaticSnapshotsRepository dockerBuildxPublish
+          ./gradlew --parallel \
+            publishAllPublicationsToSpecmaticPrivateRepository \
+            publishAllPublicationsToSpecmaticSnapshotsRepository \
+            dockerBuildxPublish \
+            -Preposilite.user=${{ vars.SPECMATIC_REPOSILITE_USERNAME }} \
+            -Preposilite.token=${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}
         env:
           ORG_GRADLE_PROJECT_signingInMemoryKey: "${{ secrets.SPECMATIC_GPG_PRIVATE_KEY }}"
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: "${{ secrets.SPECMATIC_GPG_KEY_ID }}"
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: "${{ secrets.SPECMATIC_GPG_PRIVATE_KEY_PASSPHRASE }}"
           ORG_GRADLE_PROJECT_specmaticSnapshotsUsername: "${{ vars.SPECMATIC_REPOSILITE_USERNAME }}"
           ORG_GRADLE_PROJECT_specmaticSnapshotsPassword: "${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}"
-          ORG_GRADLE_PROJECT_specmaticReleasesUsername: "${{ vars.SPECMATIC_REPOSILITE_USERNAME }}"
-          ORG_GRADLE_PROJECT_specmaticReleasesPassword: "${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}"
           ORG_GRADLE_PROJECT_specmaticPrivateUsername: "${{ vars.SPECMATIC_REPOSILITE_USERNAME }}"
           ORG_GRADLE_PROJECT_specmaticPrivatePassword: "${{ secrets.SPECMATIC_REPOSILITE_TOKEN }}"
           SPECMATIC_DOCKER_HUB_TOKEN: "${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }}"
