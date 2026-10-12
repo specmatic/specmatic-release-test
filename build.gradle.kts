@@ -4,6 +4,7 @@ plugins {
     id("io.specmatic.gradle")
 }
 
+
 specmatic {
     releasePublishTasks =
         listOf(
@@ -19,7 +20,7 @@ specmatic {
             url = "https://repo.specmatic.io/releases",
             type = RepoType.PUBLISH_OBFUSCATED_ONLY
         )
-        canonicalMavenRepository = uri("https://repo.specmatic.io/snapshots")
+        sourceMavenRepository("specmaticSnapshots", "https://repo.specmatic.io/snapshots")
         dockerImage("specmatic/release-test-snapshot", "specmatic/release-test")
     }
 
@@ -107,4 +108,3 @@ specmatic {
         }
     }
 }
-
